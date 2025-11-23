@@ -17,16 +17,16 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 13%;
 
-    --primary: 36 100% 50%;
+    --primary: 345 90% 65%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 36 100% 65%;
+    --secondary: 345 80% 75%;
     --secondary-foreground: 0 0% 13%;
 
     --muted: 0 0% 96%;
     --muted-foreground: 0 0% 45%;
 
-    --accent: 36 100% 95%;
+    --accent: 345 90% 95%;
     --accent-foreground: 0 0% 13%;
 
     --destructive: 0 84.2% 60.2%;
@@ -34,20 +34,20 @@ All colors MUST be HSL.
 
     --border: 0 0% 90%;
     --input: 0 0% 90%;
-    --ring: 36 100% 50%;
+    --ring: 345 90% 65%;
 
     --radius: 1rem;
 
     /* Custom colors for Adopt a Friend */
-    --warm-orange: 36 100% 50%;
-    --light-orange: 36 100% 65%;
-    --paw-orange: 36 100% 55%;
+    --warm-coral: 345 90% 65%;
+    --light-coral: 345 80% 75%;
+    --paw-coral: 345 85% 70%;
     
     /* Gradients */
-    --gradient-warm: linear-gradient(135deg, hsl(36 100% 50%), hsl(36 100% 65%));
+    --gradient-warm: linear-gradient(135deg, hsl(345 90% 65%), hsl(345 80% 75%));
     
     /* Shadows */
-    --shadow-soft: 0 4px 20px -2px hsl(36 100% 50% / 0.1);
+    --shadow-soft: 0 4px 20px -2px hsl(345 90% 65% / 0.1);
     --shadow-card: 0 2px 12px -2px hsl(0 0% 0% / 0.08);
     
     /* Transitions */
@@ -64,10 +64,10 @@ All colors MUST be HSL.
     --popover: 0 0% 13%;
     --popover-foreground: 0 0% 100%;
 
-    --primary: 36 100% 50%;
+    --primary: 345 90% 65%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 36 100% 65%;
+    --secondary: 345 80% 75%;
     --secondary-foreground: 0 0% 13%;
 
     --muted: 0 0% 20%;
@@ -81,7 +81,7 @@ All colors MUST be HSL.
 
     --border: 0 0% 20%;
     --input: 0 0% 20%;
-    --ring: 36 100% 50%;
+    --ring: 345 90% 65%;
   }
 }
 

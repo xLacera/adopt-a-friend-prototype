@@ -33,7 +33,7 @@ const AboutSection = () => {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6 md:gap-8">
+        <div className="grid md:grid-cols-3 gap-6 md:gap-8 mb-16">
           {features.map((feature, index) => {
             const Icon = feature.icon;
             return (
@@ -52,6 +52,35 @@ const AboutSection = () => {
               </Card>
             );
           })}
+        </div>
+
+        {/* Team Section */}
+        <div className="mt-16 pt-16 border-t border-border">
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-12 text-center">
+            Nuestro Equipo
+          </h2>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {[
+              { name: "Camilo Gaitán", role: "Co-fundador" },
+              { name: "Ana Cristina Vásquez", role: "Co-fundadora" },
+              { name: "Alexandra Giraldo", role: "Co-fundadora" },
+              { name: "Elías Lacera", role: "Co-fundador" }
+            ].map((member, index) => (
+              <Card key={index} className="border-none shadow-card text-center">
+                <CardContent className="p-6 space-y-3">
+                  <div className="w-20 h-20 mx-auto bg-accent rounded-full flex items-center justify-center mb-4">
+                    <Heart className="w-10 h-10 text-primary" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-foreground">
+                    {member.name}
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    {member.role}
+                  </p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </div>
       </div>
     </section>

@@ -3,12 +3,12 @@ import heroImage from "@/assets/hero-pets.jpg";
 
 const Hero = () => {
   return (
-    <section id="inicio" className="pt-24 pb-16 md:pt-32 md:pb-24 bg-background">
+    <section id="inicio" className="pt-32 pb-20 md:pt-40 md:pb-32 bg-background">
       <div className="container mx-auto px-4">
         <div className="grid md:grid-cols-2 gap-12 items-center">
           {/* Text Content */}
-          <div className="space-y-6 order-2 md:order-1">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight">
+          <div className="space-y-8 order-2 md:order-1">
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-foreground leading-tight">
               Encuentra tu Nuevo Mejor Amigo
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">

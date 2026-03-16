@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { PawPrint, Menu, X } from "lucide-react";
 
@@ -8,6 +8,23 @@ interface NavbarProps {
 
 const Navbar = ({ onLoginClick }: NavbarProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    setIsAuthenticated(!!localStorage.getItem("adopt_token"));
+    
+    const handleAuthChange = () => {
+      setIsAuthenticated(!!localStorage.getItem("adopt_token"));
+    };
+    
+    window.addEventListener("authChange", handleAuthChange);
+    return () => window.removeEventListener("authChange", handleAuthChange);
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("adopt_token");
+    window.dispatchEvent(new Event("authChange"));
+  };
 
   const navLinks = [
     { name: "Inicio", href: "#inicio" },
@@ -39,9 +56,15 @@ const Navbar = ({ onLoginClick }: NavbarProps) => {
                 {link.name}
               </a>
             ))}
-            <Button onClick={onLoginClick} variant="default" size="lg">
-              Iniciar Sesión
-            </Button>
+            {isAuthenticated ? (
+              <Button onClick={handleLogout} variant="destructive" size="lg">
+                Cerrar Sesión
+              </Button>
+            ) : (
+              <Button onClick={onLoginClick} variant="default" size="lg">
+                Iniciar Sesión
+              </Button>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -67,9 +90,15 @@ const Navbar = ({ onLoginClick }: NavbarProps) => {
                 {link.name}
               </a>
             ))}
-            <Button onClick={onLoginClick} variant="default" size="lg" className="w-full">
-              Iniciar Sesión
-            </Button>
+            {isAuthenticated ? (
+              <Button onClick={handleLogout} variant="destructive" size="lg" className="w-full">
+                Cerrar Sesión
+              </Button>
+            ) : (
+              <Button onClick={onLoginClick} variant="default" size="lg" className="w-full">
+                Iniciar Sesión
+              </Button>
+            )}
           </div>
         )}
       </div>

@@ -18,6 +18,12 @@ interface LoginModalProps {
 
 const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
   const [isLogin, setIsLogin] = useState(true);
+  const [errorMsg, setErrorMsg] = useState("");
+
+  const toggleMode = () => {
+    setIsLogin(!isLogin);
+    setErrorMsg("");
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -37,14 +43,84 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
           </DialogDescription>
         </DialogHeader>
         
-        <form className="space-y-4 py-4">
+        <form className="space-y-4 py-4" onSubmit={async (e) => {
+          e.preventDefault();
+          setErrorMsg("");
+          const formData = new FormData(e.currentTarget);
+          const email = formData.get("email") as string;
+          const password = formData.get("password") as string;
+          
+          try {
+            if (isLogin) {
+              const res = await fetch("http://localhost:3001/api/auth/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password })
+              });
+              const data = await res.json();
+              if (res.ok) {
+                localStorage.setItem("adopt_token", data.token);
+                window.dispatchEvent(new Event("authChange"));
+                alert("¡Inicio de sesión exitoso!");
+                onOpenChange(false);
+              } else {
+                setErrorMsg(data.error || "Credenciales incorrectas");
+              }
+            } else {
+              const confirmPassword = formData.get("confirm-password") as string;
+              if (password !== confirmPassword) {
+                setErrorMsg("Las contraseñas no coinciden");
+                return;
+              }
+              const name = formData.get("name") as string || email.split('@')[0];
+              const res = await fetch("http://localhost:3001/api/auth/register", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password, name })
+              });
+              const data = await res.json();
+              if (res.ok) {
+                localStorage.setItem("adopt_token", data.token);
+                window.dispatchEvent(new Event("authChange"));
+                alert("¡Registro exitoso!");
+                onOpenChange(false);
+              } else {
+                setErrorMsg(data.error || "Fallo en el registro");
+              }
+            }
+          } catch (err) {
+            setErrorMsg("Error conectando con el servidor");
+          }
+        }}>
+          {errorMsg && (
+            <div className="p-3 text-sm text-red-500 bg-red-100/50 border border-red-200 rounded-md text-center">
+              {errorMsg}
+            </div>
+          )}
+
+          {!isLogin && (
+            <div className="space-y-2">
+              <Label htmlFor="name">Nombre</Label>
+              <Input 
+                id="name" 
+                name="name"
+                type="text" 
+                placeholder="Tu nombre completo"
+                className="w-full"
+                required={!isLogin}
+              />
+            </div>
+          )}
+
           <div className="space-y-2">
             <Label htmlFor="email">Correo Electrónico</Label>
             <Input 
               id="email" 
+              name="email"
               type="email" 
               placeholder="tu@email.com"
               className="w-full"
+              required
             />
           </div>
           
@@ -52,9 +128,11 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
             <Label htmlFor="password">Contraseña</Label>
             <Input 
               id="password" 
+              name="password"
               type="password" 
               placeholder="••••••••"
               className="w-full"
+              required
             />
           </div>
 
@@ -64,35 +142,12 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
                 <Label htmlFor="confirm-password">Confirmar Contraseña</Label>
                 <Input 
                   id="confirm-password" 
+                  name="confirm-password"
                   type="password" 
                   placeholder="••••••••"
                   className="w-full"
+                  required={!isLogin}
                 />
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="city">Ciudad</Label>
-                <select 
-                  id="city"
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                >
-                  <option value="">Selecciona tu ciudad</option>
-                  <option value="bogota">Bogotá</option>
-                  <option value="medellin">Medellín</option>
-                  <option value="cali">Cali</option>
-                  <option value="barranquilla">Barranquilla</option>
-                  <option value="cartagena">Cartagena</option>
-                  <option value="cucuta">Cúcuta</option>
-                  <option value="bucaramanga">Bucaramanga</option>
-                  <option value="pereira">Pereira</option>
-                  <option value="santa-marta">Santa Marta</option>
-                  <option value="ibague">Ibagué</option>
-                  <option value="manizales">Manizales</option>
-                  <option value="pasto">Pasto</option>
-                  <option value="neiva">Neiva</option>
-                  <option value="armenia">Armenia</option>
-                  <option value="villavicencio">Villavicencio</option>
-                </select>
               </div>
             </>
           )}
@@ -105,7 +160,7 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
             <button
               type="button"
               className="text-sm text-primary hover:underline"
-              onClick={() => setIsLogin(!isLogin)}
+              onClick={toggleMode}
             >
               {isLogin 
                 ? "¿No tienes cuenta? Regístrate" 

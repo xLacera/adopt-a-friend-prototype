@@ -1,0 +1,34 @@
+// Esquema de base de datos para Adopt a Friend
+// Generado con Prisma ORM
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Modelo de Usuario - Para autenticación y registro
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  name      String
+  createdAt DateTime @default(now())
+}
+
+// Modelo de Mascota - Para el CRUD de mascotas en adopción
+model Pet {
+  id          Int      @id @default(autoincrement())
+  name        String
+  breed       String
+  age         String
+  description String
+  imageUrl    String?
+  temperament String
+  species     String   @default("perro")
+  available   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+}

@@ -10,6 +10,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { PawPrint } from "lucide-react";
+import { toast } from "sonner";
+import { API_BASE_URL } from "@/lib/api";
 
 interface LoginModalProps {
   open: boolean;
@@ -52,7 +54,7 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
           
           try {
             if (isLogin) {
-              const res = await fetch("http://localhost:3001/api/auth/login", {
+              const res = await fetch(`${API_BASE_URL}/api/auth/login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, password })
@@ -61,7 +63,7 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
               if (res.ok) {
                 localStorage.setItem("adopt_token", data.token);
                 window.dispatchEvent(new Event("authChange"));
-                alert("¡Inicio de sesión exitoso!");
+                toast.success("¡Inicio de sesión exitoso!");
                 onOpenChange(false);
               } else {
                 setErrorMsg(data.error || "Credenciales incorrectas");
@@ -73,7 +75,7 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
                 return;
               }
               const name = formData.get("name") as string || email.split('@')[0];
-              const res = await fetch("http://localhost:3001/api/auth/register", {
+              const res = await fetch(`${API_BASE_URL}/api/auth/register`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ email, password, name })
@@ -82,7 +84,7 @@ const LoginModal = ({ open, onOpenChange }: LoginModalProps) => {
               if (res.ok) {
                 localStorage.setItem("adopt_token", data.token);
                 window.dispatchEvent(new Event("authChange"));
-                alert("¡Registro exitoso!");
+                toast.success("¡Registro exitoso!");
                 onOpenChange(false);
               } else {
                 setErrorMsg(data.error || "Fallo en el registro");

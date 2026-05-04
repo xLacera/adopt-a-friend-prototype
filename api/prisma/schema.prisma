@@ -10,13 +10,29 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  USER
+  ADMIN
+}
+
+enum AdoptionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
 // Modelo de Usuario - Para autenticación y registro
 model User {
   id        Int      @id @default(autoincrement())
   email     String   @unique
   password  String
   name      String
+  role      Role     @default(USER)
   createdAt DateTime @default(now())
+
+  favorites  Favorite[]
+  adoptions  Adoption[]
 }
 
 // Modelo de Mascota - Para el CRUD de mascotas en adopción
@@ -29,6 +45,38 @@ model Pet {
   imageUrl    String?
   temperament String
   species     String   @default("perro")
+  city        String   @default("Bogotá")
   available   Boolean  @default(true)
   createdAt   DateTime @default(now())
+
+  favorites  Favorite[]
+  adoptions  Adoption[]
+}
+
+// Favoritos: relación many-to-many entre User y Pet
+model Favorite {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  petId     Int
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  pet  Pet  @relation(fields: [petId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, petId])
+}
+
+// Solicitud de adopción
+model Adoption {
+  id        Int            @id @default(autoincrement())
+  userId    Int
+  petId     Int
+  message   String
+  phone     String?
+  status    AdoptionStatus @default(PENDING)
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  pet  Pet  @relation(fields: [petId], references: [id], onDelete: Cascade)
 }

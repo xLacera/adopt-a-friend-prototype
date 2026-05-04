@@ -1,6 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { PawPrint, Menu, X } from "lucide-react";
+import { clearToken } from "@/lib/api";
+import { useCurrentUser } from "@/lib/useCurrentUser";
 
 interface NavbarProps {
   onLoginClick: () => void;
@@ -8,54 +11,80 @@ interface NavbarProps {
 
 const Navbar = ({ onLoginClick }: NavbarProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  useEffect(() => {
-    setIsAuthenticated(!!localStorage.getItem("adopt_token"));
-    
-    const handleAuthChange = () => {
-      setIsAuthenticated(!!localStorage.getItem("adopt_token"));
-    };
-    
-    window.addEventListener("authChange", handleAuthChange);
-    return () => window.removeEventListener("authChange", handleAuthChange);
-  }, []);
+  const { isAuthenticated, isAdmin } = useCurrentUser();
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.removeItem("adopt_token");
-    window.dispatchEvent(new Event("authChange"));
+    clearToken();
+    navigate("/");
   };
 
-  const navLinks = [
-    { name: "Inicio", href: "#inicio" },
-    { name: "¿Quiénes Somos?", href: "#quienes-somos" },
-    { name: "Nuestros Amigos", href: "#nuestros-amigos" },
-    { name: "Blog", href: "#blog" },
+  // Anclas dentro de la home y rutas de página separada.
+  const sectionLinks = [
+    { name: "Inicio", section: "inicio" },
+    { name: "¿Quiénes Somos?", section: "quienes-somos" },
+    { name: "Nuestros Amigos", section: "nuestros-amigos" },
   ];
+
+  const goToSection = (section: string) => {
+    setIsMenuOpen(false);
+    if (location.pathname !== "/") {
+      navigate(`/#${section}`);
+      // El scroll se hace tras el cambio de ruta
+      setTimeout(() => {
+        document.getElementById(section)?.scrollIntoView({ behavior: "smooth" });
+      }, 50);
+    } else {
+      document.getElementById(section)?.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
   return (
     <nav className="fixed top-0 left-0 right-0 bg-background/95 backdrop-blur-sm z-50 border-b border-border shadow-sm">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <a href="#inicio" className="flex items-center gap-2 group">
+          <Link to="/" className="flex items-center gap-2 group">
             <PawPrint className="w-8 h-8 text-primary transition-transform group-hover:scale-110" />
             <span className="text-2xl font-bold text-foreground">
               Adopt a Friend
             </span>
-          </a>
+          </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
-            {navLinks.map((link) => (
-              <a
+            {sectionLinks.map((link) => (
+              <button
                 key={link.name}
-                href={link.href}
+                onClick={() => goToSection(link.section)}
                 className="text-foreground hover:text-primary transition-colors font-medium"
               >
                 {link.name}
-              </a>
+              </button>
             ))}
+            <Link
+              to="/blog"
+              className="text-foreground hover:text-primary transition-colors font-medium"
+            >
+              Blog
+            </Link>
+            {isAuthenticated && (
+              <Link
+                to="/perfil"
+                className="text-foreground hover:text-primary transition-colors font-medium"
+              >
+                Perfil
+              </Link>
+            )}
+            {isAdmin && (
+              <Link
+                to="/admin"
+                className="text-primary hover:text-primary/80 transition-colors font-semibold"
+              >
+                Admin
+              </Link>
+            )}
             {isAuthenticated ? (
               <Button onClick={handleLogout} variant="destructive" size="lg">
                 Cerrar Sesión
@@ -80,16 +109,40 @@ const Navbar = ({ onLoginClick }: NavbarProps) => {
         {/* Mobile Navigation */}
         {isMenuOpen && (
           <div className="md:hidden mt-4 pb-4 space-y-4 border-t border-border pt-4">
-            {navLinks.map((link) => (
-              <a
+            {sectionLinks.map((link) => (
+              <button
                 key={link.name}
-                href={link.href}
-                className="block text-foreground hover:text-primary transition-colors font-medium"
-                onClick={() => setIsMenuOpen(false)}
+                onClick={() => goToSection(link.section)}
+                className="block w-full text-left text-foreground hover:text-primary transition-colors font-medium"
               >
                 {link.name}
-              </a>
+              </button>
             ))}
+            <Link
+              to="/blog"
+              onClick={() => setIsMenuOpen(false)}
+              className="block text-foreground hover:text-primary transition-colors font-medium"
+            >
+              Blog
+            </Link>
+            {isAuthenticated && (
+              <Link
+                to="/perfil"
+                onClick={() => setIsMenuOpen(false)}
+                className="block text-foreground hover:text-primary transition-colors font-medium"
+              >
+                Perfil
+              </Link>
+            )}
+            {isAdmin && (
+              <Link
+                to="/admin"
+                onClick={() => setIsMenuOpen(false)}
+                className="block text-primary hover:text-primary/80 transition-colors font-semibold"
+              >
+                Admin
+              </Link>
+            )}
             {isAuthenticated ? (
               <Button onClick={handleLogout} variant="destructive" size="lg" className="w-full">
                 Cerrar Sesión

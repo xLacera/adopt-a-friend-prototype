@@ -5,6 +5,7 @@
 const express = require("express");
 const { PrismaClient } = require("@prisma/client");
 const authMiddleware = require("../middleware/auth");
+const adminOnly = require("../middleware/admin");
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -40,19 +41,27 @@ router.get("/:id", async (req, res) => {
 });
 
 // POST /api/pets - Crear una nueva mascota (protegido)
-router.post("/", authMiddleware, async (req, res) => {
+router.post("/", authMiddleware, adminOnly, async (req, res) => {
   try {
-    const { name, breed, age, description, imageUrl, temperament, species } = req.body;
+    const { name, breed, age, description, imageUrl, temperament, species, city } = req.body;
 
-    // Validar campos requeridos
-    if (!name || !breed || !age || !description || !temperament) {
+    if (!name || !breed || !age || !description || !temperament || !city) {
       return res.status(400).json({
-        error: "Campos requeridos: name, breed, age, description, temperament",
+        error: "Campos requeridos: name, breed, age, description, temperament, city",
       });
     }
 
     const pet = await prisma.pet.create({
-      data: { name, breed, age, description, imageUrl, temperament, species: species || "perro" },
+      data: {
+        name,
+        breed,
+        age,
+        description,
+        imageUrl,
+        temperament,
+        city: city.trim(),
+        species: species || "perro",
+      },
     });
 
     res.status(201).json({ message: "Mascota creada exitosamente", pet });
@@ -63,20 +72,33 @@ router.post("/", authMiddleware, async (req, res) => {
 });
 
 // PUT /api/pets/:id - Actualizar una mascota (protegido)
-router.put("/:id", authMiddleware, async (req, res) => {
+router.put("/:id", authMiddleware, adminOnly, async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, breed, age, description, imageUrl, temperament, species, available } = req.body;
+    const { name, breed, age, description, imageUrl, temperament, species, city, available } = req.body;
 
-    // Verificar que la mascota existe
     const existing = await prisma.pet.findUnique({ where: { id: Number(id) } });
     if (!existing) {
       return res.status(404).json({ error: "Mascota no encontrada" });
     }
 
+    if (city !== undefined && (!city || !city.trim())) {
+      return res.status(400).json({ error: "La ciudad no puede estar vacía" });
+    }
+
     const pet = await prisma.pet.update({
       where: { id: Number(id) },
-      data: { name, breed, age, description, imageUrl, temperament, species, available },
+      data: {
+        name,
+        breed,
+        age,
+        description,
+        imageUrl,
+        temperament,
+        species,
+        city: city ? city.trim() : undefined,
+        available,
+      },
     });
 
     res.json({ message: "Mascota actualizada exitosamente", pet });
@@ -87,7 +109,7 @@ router.put("/:id", authMiddleware, async (req, res) => {
 });
 
 // DELETE /api/pets/:id - Eliminar una mascota (protegido)
-router.delete("/:id", authMiddleware, async (req, res) => {
+router.delete("/:id", authMiddleware, adminOnly, async (req, res) => {
   try {
     const { id } = req.params;
 

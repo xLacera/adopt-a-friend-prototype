@@ -1,6 +1,10 @@
 import { Button } from "@/components/ui/button";
 import heroImage from "@/assets/hero-pets.jpg";
 
+/**
+ * Componente Hero: Esta es la sección principal y gigante que el usuario
+ * ve primero al cargar la página. Tiene el texto de bienvenida y una imagen.
+ */
 const Hero = () => {
   return (
     <section id="inicio" className="pt-32 pb-20 md:pt-40 md:pb-32 bg-background">

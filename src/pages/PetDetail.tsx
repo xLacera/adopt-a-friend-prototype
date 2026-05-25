@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { ApiError, apiFetch } from "@/lib/api";
 import { useCurrentUser } from "@/lib/useCurrentUser";
 import { useFavorites } from "@/lib/useFavorites";
+import { DEMO_PETS } from "@/lib/demoPets";
 import type { Pet } from "@/lib/types";
 import pet1 from "@/assets/pet-1.jpg";
 import pet2 from "@/assets/pet-2.jpg";
@@ -50,10 +51,14 @@ const PetDetail = () => {
     apiFetch<Pet>(`/api/pets/${id}`)
       .then(setPet)
       .catch((err) => {
-        if (err instanceof ApiError && err.status === 404) {
+        // Fallback a mascotas demo cuando el backend no está disponible (modo público).
+        const demo = DEMO_PETS.find((p) => p.id === Number(id));
+        if (demo) {
+          setPet(demo);
+        } else if (err instanceof ApiError && err.status === 404) {
           setNotFound(true);
         } else {
-          toast.error("No pudimos cargar la información de la mascota");
+          setNotFound(true);
         }
       })
       .finally(() => setLoading(false));

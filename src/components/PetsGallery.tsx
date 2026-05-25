@@ -11,6 +11,7 @@ import pet4 from "@/assets/pet-4.jpg";
 import { apiFetch } from "@/lib/api";
 import { useCurrentUser } from "@/lib/useCurrentUser";
 import { useFavorites } from "@/lib/useFavorites";
+import { DEMO_PETS } from "@/lib/demoPets";
 import type { Pet } from "@/lib/types";
 
 const PetsGallery = () => {
@@ -20,8 +21,8 @@ const PetsGallery = () => {
 
   useEffect(() => {
     apiFetch<Pet[]>("/api/pets")
-      .then(setPets)
-      .catch((err) => console.error("Error cargando mascotas:", err));
+      .then((data) => setPets(data.length > 0 ? data : DEMO_PETS))
+      .catch(() => setPets(DEMO_PETS));
   }, []);
 
   const handleToggleFavorite = async (e: React.MouseEvent, petId: number) => {

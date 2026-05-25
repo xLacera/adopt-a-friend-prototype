@@ -22,9 +22,29 @@ if (!process.env.DATABASE_URL) {
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Middlewares globales
-app.use(cors()); // Permitir peticiones desde el frontend
-app.use(express.json()); // Parsear body JSON
+// CORS: en producción restringe al origen del frontend; en desarrollo permite cualquiera.
+// FRONTEND_URL acepta una lista separada por comas si se necesitan varios orígenes.
+const allowedOrigins = (process.env.FRONTEND_URL || "")
+  .split(",")
+  .map((s) => s.trim())
+  .filter(Boolean);
+
+const corsOptions = allowedOrigins.length === 0
+  ? {}
+  : {
+      origin: (origin, callback) => {
+        // Permitir peticiones sin origen (curl, healthchecks de Render) y orígenes en la lista.
+        if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
+        return callback(new Error(`Origen ${origin} no permitido por CORS`));
+      },
+      credentials: true,
+    };
+
+app.use(cors(corsOptions));
+app.use(express.json());
+
+// Healthcheck simple — útil para Render
+app.get("/health", (req, res) => res.json({ status: "ok" }));
 
 // Ruta principal - Información de la API
 app.get("/", (req, res) => {
@@ -68,6 +88,10 @@ app.use("/api/adoptions", adoptionRoutes);
 
 // Iniciar servidor
 app.listen(PORT, () => {
-  console.log(`✅ Servidor corriendo en http://localhost:${PORT}`);
-  console.log(`📋 Documentación de la API en http://localhost:${PORT}`);
+  console.log(`✅ Servidor corriendo en puerto ${PORT}`);
+  if (allowedOrigins.length > 0) {
+    console.log(`🔐 CORS limitado a: ${allowedOrigins.join(", ")}`);
+  } else {
+    console.log("🔓 CORS abierto (modo desarrollo)");
+  }
 });

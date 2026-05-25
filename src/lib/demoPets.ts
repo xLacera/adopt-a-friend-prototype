@@ -1,0 +1,38 @@
+import type { Pet } from "./types";
+
+// Datos de demostración usados cuando no hay backend disponible (modo público).
+// Refleja el catálogo seed real del proyecto.
+export const DEMO_PETS: Pet[] = [
+  { id: 1, name: "Max", breed: "Beagle", age: "3 meses",
+    description: "Juguetón y cariñoso, le encanta correr y jugar con pelotas.",
+    imageUrl: "/pet-1.jpg", temperament: "Juguetón", species: "perro",
+    city: "Bogotá", available: true, createdAt: "2026-01-01T00:00:00.000Z" },
+  { id: 2, name: "Luna", breed: "Persa", age: "2 meses",
+    description: "Tranquila y dulce, perfecta para un hogar tranquilo.",
+    imageUrl: "/pet-2.jpg", temperament: "Tranquila", species: "gato",
+    city: "Medellín", available: true, createdAt: "2026-01-01T00:00:00.000Z" },
+  { id: 3, name: "Rocky", breed: "Golden Retriever", age: "2 años",
+    description: "Energético y leal, ideal para familias activas.",
+    imageUrl: "/pet-3.jpg", temperament: "Energético", species: "perro",
+    city: "Cali", available: true, createdAt: "2026-01-01T00:00:00.000Z" },
+  { id: 4, name: "Mimi", breed: "Gata Naranja", age: "1 año",
+    description: "Elegante y amigable, se lleva bien con otros gatos.",
+    imageUrl: "/pet-4.jpg", temperament: "Amigable", species: "gato",
+    city: "Barranquilla", available: true, createdAt: "2026-01-01T00:00:00.000Z" },
+  { id: 5, name: "Toby", breed: "Mestizo", age: "6 meses",
+    description: "Curioso y muy sociable. Le encanta conocer gente nueva.",
+    imageUrl: "/pet-1.jpg", temperament: "Curioso", species: "perro",
+    city: "Cartagena", available: true, createdAt: "2026-01-01T00:00:00.000Z" },
+  { id: 6, name: "Pelusa", breed: "Siames", age: "3 años",
+    description: "Independiente pero cariñosa. Adora las siestas largas en el sofá.",
+    imageUrl: "/pet-2.jpg", temperament: "Independiente", species: "gato",
+    city: "Bucaramanga", available: true, createdAt: "2026-01-01T00:00:00.000Z" },
+  { id: 7, name: "Bruno", breed: "Labrador", age: "4 años",
+    description: "Tranquilo, paciente y excelente con niños. Ideal para familias.",
+    imageUrl: "/pet-3.jpg", temperament: "Paciente", species: "perro",
+    city: "Pereira", available: true, createdAt: "2026-01-01T00:00:00.000Z" },
+  { id: 8, name: "Nina", breed: "Mestiza", age: "1 año",
+    description: "Pequeña y muy juguetona. Necesita un hogar con espacio para correr.",
+    imageUrl: "/pet-4.jpg", temperament: "Juguetona", species: "gato",
+    city: "Manizales", available: true, createdAt: "2026-01-01T00:00:00.000Z" },
+];
